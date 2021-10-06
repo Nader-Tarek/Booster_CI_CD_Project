@@ -1,37 +1,35 @@
 pipeline{
-  agent {label "docker"}
+  agent {label "slave-node"}
   
   stages {
     
     stage('preparation'){
       steps {
-        git 'https://github.com/ZiadAmr14/Booster_CI_CD_Project.git'
-      }
-    
+        git 'https://github.com/Nader-Tarek/Booster_CI_CD_Project'
+      } 
     }
-    
     
      stage('build image'){
       steps {
-          sh 'docker build . -f Dockerfile -t ziadamr14/sprints_django_app:latest'
+          sh 'docker build . -f Dockerfile -t nadertarekcs/sprints_django_app:latest'
         }
      }
     
     
      stage('push image'){
             steps {
-                withCredentials([usernamePassword(credentialsId:"dockerhub",usernameVariable:"USERNAME",passwordVariable:"PASSWORD")]) {
+                withCredentials([usernamePassword(credentialsId:"DockerHub",usernameVariable:"USERNAME",passwordVariable:"PASSWORD")]) {
                     
                     sh """
                       docker login -u ${USERNAME} -p ${PASSWORD}
-                      docker push ziadamr14/sprints_django_app:latest
+                      docker push nadertarekcs/sprints_django_app:latest
                     """
                 }
             }
         }
      stage('deploy'){
             steps {
-                sh 'docker run -d -p 8000:8000 ziadamr14/sprints_django_app:latest'
+                sh 'docker run -d -p 8000:8000 nadertarekcs/sprints_django_app:latest'
             }
            post {
               success {
@@ -45,13 +43,6 @@ pipeline{
     }
         }
 
-    
-    
-     
     }
-  
 
-  
-  
-    
   }
